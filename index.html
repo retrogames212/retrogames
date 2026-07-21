@@ -152,13 +152,15 @@
                 alert('Please enter the ROM file URL first!');
             }
         }
-        async function loadGame(romUrl, selectedCore) {
+async function loadGame(romUrl, selectedCore) {
             const container = document.getElementById('gameContainer');
             container.innerHTML = '<p style="color: #38bdf8; line-height: 480px; text-align: center; margin: 0;">Downloading ROM...</p>';
 
             try {
-                const response = await fetch(romUrl);
-                if (!response.ok) throw new Error('Failed to retrieve the file from the server.');
+                const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(romUrl);
+                
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error('Failed to retrieve the file.');
                 
                 const blob = await response.blob();
                 const blobUrl = URL.createObjectURL(blob);
@@ -192,7 +194,7 @@
                 `);
                 iframeDoc.close();
             } catch (error) {
-                container.innerHTML = '<p style="color: #ef4444; line-height: 480px; text-align: center; margin: 0;">Error: Failed to load ROM. Please check your link.</p>';
+                container.innerHTML = '<p style="color: #ef4444; line-height: 480px; text-align: center; margin: 0;">Error: Failed to load ROM. Please check your link.!</p>';
                 console.error(error);
             }
         }
