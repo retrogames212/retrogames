@@ -249,7 +249,7 @@
                 <h4>📌 Guide & Compatibility:</h4>
                 <ul>
                     <li><strong>GitHub / GitLab:</strong> Automatically optimized via CDN.</li>
-                    <li><strong>Internet Archive:</strong> Supported via CORS proxy integration.</li>
+                    <li><strong>Internet Archive:</strong> Direct clean link handling.</li>
                     <li><strong>Mobile/Tablet:</strong> Tap screen controls or connect a Bluetooth gamepad!</li>
                 </ul>
             </div>
@@ -327,7 +327,7 @@
             });
         });
 
-        // Fungsi Asli Andalan
+        // Fungsi Original Murni (Langsung Lempar Link Mentah Tanpa Proksi & Tanpa Fetch)
         function loadFromUrl() {
             let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
@@ -350,12 +350,11 @@
                 url = url.replace('/-/blob/', '/-/raw/');
             }
 
-            // 3. Internet Archive (Archive.org) -> Lewatkan melalui CORS Proxy agar tidak kena Network Error
+            // 3. Internet Archive (Archive.org) -> Ubah details jadi download mentah
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
-                url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
             }
 
             // 4. Dropbox Direct Link Optimizer
