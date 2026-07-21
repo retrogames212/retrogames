@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Retro Games</title>
+    <title>Universal Retro Games Hub</title>
     <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="n1b5dxdb6zb0drt"></script>
     <style>
         body {
@@ -96,12 +96,12 @@
 <body>
 
     <div class="container">
-        <h1>🕹️ Universal Retro Games</h1>
-        <p>Play retro games from local files, Dropbox, or other direct cloud links!</p>
+        <h1>🕹️ Universal Retro Games Hub</h1>
+        <p>Play retro games from local files, Dropbox, or Cloud Direct Links seamlessly!</p>
 
         <div class="rom-selector">
             <div style="text-align: center;">
-                <label><strong>Pilih Konsol / Core:</strong> </label>
+                <label><strong>Select Console / Core:</strong> </label>
                 <select id="consoleSelect">
                     <option value="nes">NES (Nintendo)</option>
                     <option value="snes">SNES (Super Nintendo)</option>
@@ -118,45 +118,33 @@
             
             <hr style="border: 0; border-top: 1px solid #334155; width: 100%;">
 
-            <!-- Opsi 1: File Lokal -->
+            <!-- Option 1: Local File -->
             <div class="row-group">
                 <label>📁 From Device:</label>
                 <input type="file" id="romUpload">
             </div>
 
+            <!-- Option 2: Dropbox -->
             <div class="row-group">
                 <label>☁️ From Cloud:</label>
                 <button type="button" id="dropboxBtn" class="btn dbx-btn">Choose from Dropbox</button>
             </div>
 
+            <!-- Option 3: Direct Link (GitHub / Cloud) -->
             <div class="row-group">
                 <label>🔗 Direct Link:</label>
-                <input type="text" id="romUrlInput" placeholder="https://example.com/game.zip (or another direct cloud link)">
+                <input type="text" id="romUrlInput" placeholder="Paste GitHub raw link or direct cloud URL here...">
                 <button type="button" onclick="loadFromUrl()" class="btn url-btn">Load URL</button>
             </div>
         </div>
 
         <div id="gameContainer">
-            <p style="color: #64748b; line-height: 480px; text-align: center; margin: 0;">Select a ROM file to start playing.</p>
+            <p style="color: #64748b; line-height: 480px; text-align: center; margin: 0;">Select a ROM file to start playing</p>
         </div>
     </div>
 
     <script>
-        function loadFromUrl() {
-            let url = document.getElementById('romUrlInput').value.trim();
-            const selectedCore = document.getElementById('consoleSelect').value;
-            
-            if (!url) {
-                alert('Silakan masukkan URL file ROM terlebih dahulu!');
-                return;
-            }
-
-            if (url.includes('github.com') && url.includes('/raw/')) {
-                url = url.replace('https://github.com/', 'https://cdn.jsdelivr.net/gh/')
-                         .replace('/raw/refs/heads/', '@')
-                         .replace('/raw/', '@');
-            }
-
+        function loadGame(romUrl, selectedCore) {
             const container = document.getElementById('gameContainer');
             container.innerHTML = '';
 
@@ -179,7 +167,7 @@
                     <script>
                         window.EJS_player = '#game';
                         window.EJS_core = '${selectedCore}';
-                        window.EJS_gameUrl = '${url}';
+                        window.EJS_gameUrl = '${romUrl}';
                         window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
                     <\/script>
                     <script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script>
@@ -207,18 +195,27 @@
                 },
                 cancel: function() {},
                 linkType: "preview",
-                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.bin', '.iso', '.chd', '.n64', '.zip']
+                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.n64', '.chd', '.bin', '.iso', '.zip']
             });
         });
 
         function loadFromUrl() {
-            const url = document.getElementById('romUrlInput').value.trim();
+            let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
-            if (url) {
-                loadGame(url, selectedCore);
-            } else {
-                alert('Please enter the ROM file URL first!');
+            
+            if (!url) {
+                alert('Please enter a ROM file URL first!');
+                return;
             }
+
+            if (url.includes('github.com') && (url.includes('/raw/') || url.includes('/blob/'))) {
+                url = url.replace('https://github.com/', 'https://cdn.jsdelivr.net/gh/')
+                         .replace('/raw/refs/heads/', '@')
+                         .replace('/raw/', '@')
+                         .replace('/blob/', '@');
+            }
+
+            loadGame(url, selectedCore);
         }
     </script>
 
