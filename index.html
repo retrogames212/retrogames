@@ -372,6 +372,7 @@
                 return;
             }
 
+            // 1. GitHub (Auto-convert to jsDelivr CDN)
             if (url.includes('github.com') && (url.includes('/raw/') || url.includes('/blob/'))) {
                 url = url.replace('https://github.com/', 'https://cdn.jsdelivr.net/gh/')
                          .replace('/raw/refs/heads/', '@')
@@ -379,17 +380,21 @@
                          .replace('/blob/', '@');
             }
             
+            // 2. GitLab (Auto-convert to raw GitLab)
             else if (url.includes('gitlab.com') && url.includes('/-/blob/')) {
                 url = url.replace('/-/blob/', '/-/raw/');
             }
 
+            // 3. Internet Archive (Archive.org) -> Gunakan CORS Proxy stabil khusus file game
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
-                url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
+                // Menggunakan corsproxy.io agar header CORS Archive.org diizinkan masuk ke browser
+                url = "https://corsproxy.io/?" + encodeURIComponent(url);
             }
 
+            // 4. Dropbox Direct Link Optimizer
             else if (url.includes('dropbox.com')) {
                 url = url.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
                          .replace('dl.dropbox.com', 'dl.dropboxusercontent.com');
@@ -403,12 +408,22 @@
             loadGame(url, selectedCore);
         }
 
-        window.addEventListener('load', () => {
+		window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                const nativeAdBox = document.getElementById('container-0524f9df72294ab0e7c386b845f22017');
-                if (nativeAdBox && nativeAdBox.offsetHeight === 0) {
-                }
-            }, 3000);
+                const testAd = document.createElement('div');
+                testAd.innerHTML = '&nbsp;';
+                testAd.className = 'adsbox';
+                testAd.style.position = 'absolute';
+                testAd.style.left = '-999px';
+                document.body.appendChild(testAd);
+                
+                window.setTimeout(() => {
+                    if (testAd.offsetHeight === 0 || window.document.getElementById('container-0524f9df72294ab0e7c386b845f22017').offsetHeight === 0) {
+                        document.getElementById('adblock-modal').style.display = 'flex';
+                    }
+                    testAd.remove();
+                }, 500);
+            }, 1500);
         });
     </script>
 </body>
