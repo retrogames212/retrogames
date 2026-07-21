@@ -149,17 +149,16 @@
                 const proxiedUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
                 loadGame(proxiedUrl, selectedCore);
             } else {
-                alert('Silakan masukkan URL file ROM terlebih dahulu!');
+                alert('Please enter the ROM file URL first!');
             }
         }
         async function loadGame(romUrl, selectedCore) {
             const container = document.getElementById('gameContainer');
-            container.innerHTML = '<p style="color: #38bdf8; line-height: 480px; text-align: center; margin: 0;">Sedang mengunduh ROM...</p>';
+            container.innerHTML = '<p style="color: #38bdf8; line-height: 480px; text-align: center; margin: 0;">Downloading ROM...</p>';
 
             try {
-                // Download file secara aman lewat fetch untuk mengatasi error jaringan/CORS
                 const response = await fetch(romUrl);
-                if (!response.ok) throw new Error('Gagal mengambil file dari server.');
+                if (!response.ok) throw new Error('Failed to retrieve the file from the server.');
                 
                 const blob = await response.blob();
                 const blobUrl = URL.createObjectURL(blob);
@@ -216,7 +215,7 @@
                 },
                 cancel: function() {},
                 linkType: "preview",
-                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.bin', '.iso', '.zip']
+                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.bin', '.iso', '.chd', '.n64', '.zip']
             });
         });
 
