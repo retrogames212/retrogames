@@ -152,51 +152,51 @@
                 alert('Please enter the ROM file URL first!');
             }
         }
-async function loadGame(romUrl, selectedCore) {
-            const container = document.getElementById('gameContainer');
-            container.innerHTML = '<p style="color: #38bdf8; line-height: 480px; text-align: center; margin: 0;">Downloading ROM...</p>';
-
-            try {
-                const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(romUrl);
-                
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error('Failed to retrieve the file.');
-                
-                const blob = await response.blob();
-                const blobUrl = URL.createObjectURL(blob);
-
-                container.innerHTML = '';
-                const iframe = document.createElement('iframe');
-                container.appendChild(iframe);
-
-                const iframeDoc = iframe.contentWindow.document;
-                iframeDoc.open();
-                iframeDoc.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <style>
-                            body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
-                            #game { width:100%; height:100%; }
-                        </style>
-                    </head>
-                    <body>
-                        <div id="game"></div>
-                        <script>
-                            window.EJS_player = '#game';
-                            window.EJS_core = '${selectedCore}';
-                            window.EJS_gameUrl = '${blobUrl}';
-                            window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-                        <\/script>
-                        <script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script>
-                    </body>
-                    </html>
-                `);
-                iframeDoc.close();
-            } catch (error) {
-                container.innerHTML = '<p style="color: #ef4444; line-height: 480px; text-align: center; margin: 0;">Error: Failed to load ROM. Please check your link.!</p>';
-                console.error(error);
+        function loadFromUrl() {
+            let url = document.getElementById('romUrlInput').value.trim();
+            const selectedCore = document.getElementById('consoleSelect').value;
+            
+            if (!url) {
+                alert('Silakan masukkan URL file ROM terlebih dahulu!');
+                return;
             }
+
+            if (url.includes('github.com') && url.includes('/raw/')) {
+                url = url.replace('https://github.com/', 'https://cdn.jsdelivr.net/gh/')
+                         .replace('/raw/refs/heads/', '@')
+                         .replace('/raw/', '@');
+            }
+
+            const container = document.getElementById('gameContainer');
+            container.innerHTML = '';
+
+            const iframe = document.createElement('iframe');
+            container.appendChild(iframe);
+
+            const iframeDoc = iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
+                        #game { width:100%; height:100%; }
+                    </style>
+                </head>
+                <body>
+                    <div id="game"></div>
+                    <script>
+                        window.EJS_player = '#game';
+                        window.EJS_core = '${selectedCore}';
+                        window.EJS_gameUrl = '${url}';
+                        window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+                    <\/script>
+                    <script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script>
+                </body>
+                </html>
+            `);
+            iframeDoc.close();
         }
 
         document.getElementById('romUpload').addEventListener('change', function(event) {
