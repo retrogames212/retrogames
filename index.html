@@ -145,16 +145,6 @@
         function loadFromUrl() {
             let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
-            if (url) {
-                const proxiedUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
-                loadGame(proxiedUrl, selectedCore);
-            } else {
-                alert('Please enter the ROM file URL first!');
-            }
-        }
-        function loadFromUrl() {
-            let url = document.getElementById('romUrlInput').value.trim();
-            const selectedCore = document.getElementById('consoleSelect').value;
             
             if (!url) {
                 alert('Silakan masukkan URL file ROM terlebih dahulu!');
