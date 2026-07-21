@@ -251,7 +251,7 @@
     </div>
 
     <div class="container">
-        <h1>🏜️ Desert Retro Arcade Hub</h1>
+        <h1>🏜️ Retro Games</h1>
         <p class="subtitle">Play classic console games smoothly on your mobile, tablet, or desktop.</p>
 
         <div class="rom-selector">
@@ -394,13 +394,13 @@
                 url = url.replace('/-/blob/', '/-/raw/');
             }
 
-            // 3. Internet Archive (Archive.org) -> Pakai corsproxy.io yang aman untuk bypass CORS browser
+            // 3. Internet Archive (Archive.org) -> Pakai allorigins kesayangan, plus pengaman ekstra
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
-                // Dibungkus corsproxy agar lolos blokiran CORS browser modern
-                url = "https://corsproxy.io/?" + encodeURIComponent(url);
+                // Tetap pakai allorigins tapi ditambah encodeURIComponent yang bersih
+                url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
             }
 
             // 4. Dropbox Direct Link Optimizer
@@ -414,7 +414,6 @@
                 }
             }
 
-            // Langsung lempar ke emulator tanpa lewat fetch() yang rawan CORS
             loadGame(url, selectedCore);
         }
         // --- Safe Pure Local Anti-AdBlock (100% Free from CORS) ---
