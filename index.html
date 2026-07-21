@@ -328,7 +328,6 @@
         });
 
         // Fungsi Original Murni (Langsung Lempar Link Mentah Tanpa Proksi & Tanpa Fetch)
-// Fungsi URL Loader dengan Fetch Blob Lokal (Bebas CORS & 100% Tembus Archive.org)
         async function loadFromUrl() {
             let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
@@ -352,11 +351,13 @@
                 url = url.replace('/-/blob/', '/-/raw/');
             }
 
-            // 3. Internet Archive (Archive.org) -> Ubah details jadi download mentah
+            // 3. Internet Archive (Archive.org) -> Bypass Cloudflare & CORS pakai dedicated proxy
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
+                // Bungkus dengan proxy agar lolos dari blokir hotlink Archive.org
+                url = "https://corsproxy.io/?" + encodeURIComponent(url);
             }
 
             // 4. Dropbox Direct Link Optimizer
@@ -372,28 +373,27 @@
 
             try {
                 loadBtn.disabled = true;
-                loadBtn.innerText = "Downloading...";
+                loadBtn.innerText = "Loading...";
 
-                // Fetch data biner ROM langsung dari server asal
+                // Cek koneksi file lewat fetch blob agar aman sebelum dilempar ke emulator
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error('Failed to load ROM file');
                 
                 const blob = await response.blob();
-                const localBlobUrl = URL.createObjectURL(blob);
+                const blobUrl = URL.createObjectURL(blob);
 
                 loadBtn.disabled = false;
                 loadBtn.innerText = "Load URL";
 
-                // Mainkan menggunakan URL blob lokal (Emulator menganggap ini seperti upload file lokal)
-                loadGame(localBlobUrl, selectedCore);
+                loadGame(blobUrl, selectedCore);
 
             } catch (error) {
-                console.warn("Fetch blocked by CORS, switching to direct stream mode...");
+                console.error("Load error:", error);
                 loadBtn.disabled = false;
                 loadBtn.innerText = "Load URL";
                 
-                // Jika masih terblokir total, arahkan user opsi unduh manual atau gunakan file lokal / Dropbox
-                alert("Network Error / CORS Blocked! Archive.org memblokir akses langsung script. Silakan download file ROM-nya terlebih dahulu, lalu gunakan opsi 'LOCAL' atau upload ke Dropbox Anda.");
+                // Jika masih mental, berikan opsi langsung lempar URL mentah ke emulator
+                loadGame(url, selectedCore);
             }
         }
     </script>
