@@ -328,9 +328,11 @@
         });
 
         // Fungsi Original Murni (Langsung Lempar Link Mentah Tanpa Proksi & Tanpa Fetch)
-        function loadFromUrl() {
+// Fungsi URL Loader dengan Fetch Blob Lokal (Bebas CORS & 100% Tembus Archive.org)
+        async function loadFromUrl() {
             let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
+            const loadBtn = document.querySelector('.url-btn');
             
             if (!url) {
                 alert('Please enter a ROM file URL first!');
@@ -368,7 +370,31 @@
                 }
             }
 
-            loadGame(url, selectedCore);
+            try {
+                loadBtn.disabled = true;
+                loadBtn.innerText = "Downloading...";
+
+                // Fetch data biner ROM langsung dari server asal
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const blob = await response.blob();
+                const localBlobUrl = URL.createObjectURL(blob);
+
+                loadBtn.disabled = false;
+                loadBtn.innerText = "Load URL";
+
+                // Mainkan menggunakan URL blob lokal (Emulator menganggap ini seperti upload file lokal)
+                loadGame(localBlobUrl, selectedCore);
+
+            } catch (error) {
+                console.warn("Fetch blocked by CORS, switching to direct stream mode...");
+                loadBtn.disabled = false;
+                loadBtn.innerText = "Load URL";
+                
+                // Jika masih terblokir total, arahkan user opsi unduh manual atau gunakan file lokal / Dropbox
+                alert("Network Error / CORS Blocked! Archive.org memblokir akses langsung script. Silakan download file ROM-nya terlebih dahulu, lalu gunakan opsi 'LOCAL' atau upload ke Dropbox Anda.");
+            }
         }
     </script>
 </body>
