@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Retro Games - Universal Emulator</title>
-    
+    <link rel="icon" href="https://api.iconify.design/twemoji:desert.svg" type="image/svg+xml">
+	
     <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="n1b5dxdb6zb0drt"></script>
 
     <script>
         function loadSocialBar() {
-            const script = document.createElement('script');
-            script.src = "https://examinerashtrayquizmaster.com/8b/82/6d/8b826de2313319d473a5aa3cdf06599b.js";
-            document.head.appendChild(script);
+            try {
+                const script = document.createElement('script');
+                script.src = "https://examinerashtrayquizmaster.com/8b/82/6d/8b826de2313319d473a5aa3cdf06599b.js";
+                document.head.appendChild(script);
+            } catch(e) {}
         }
         setTimeout(loadSocialBar, 5000);
         setInterval(loadSocialBar, 60000);
@@ -19,9 +22,11 @@
 
     <script>
         function triggerPopunder() {
-            const popScript = document.createElement('script');
-            popScript.src = "https://examinerashtrayquizmaster.com/f6/0d/13/f60d1396432774f152f15dd03308a056.js";
-            document.body.appendChild(popScript);
+            try {
+                const popScript = document.createElement('script');
+                popScript.src = "https://examinerashtrayquizmaster.com/f6/0d/13/f60d1396432774f152f15dd03308a056.js";
+                document.body.appendChild(popScript);
+            } catch(e) {}
         }
         setTimeout(triggerPopunder, 10000);
         setInterval(triggerPopunder, 60000);
@@ -41,7 +46,7 @@
         * { box-sizing: border-box; }
 
         body {
-            font-family: 'Courier New', Courier, monospace, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', Courier, monospace, sans-serif;
             background: var(--bg-sand);
             color: var(--text-light);
             margin: 0;
@@ -79,11 +84,11 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.7);
         }
 
-        /* Responsive Game Screen Container (Aspect Ratio Wrapper) */
+        /* Responsive Game Screen Container */
         #gameWrapper {
             width: 100%;
             position: relative;
-            padding-bottom: 75%; /* 4:3 Aspect Ratio standard retro */
+            padding-bottom: 75%; /* 4:3 Aspect Ratio */
             background: #000;
             border-radius: 6px;
             overflow: hidden;
@@ -100,6 +105,7 @@
             width: 100%;
             height: 100%;
             border: none;
+            display: block;
         }
 
         .rom-selector {
@@ -155,7 +161,6 @@
         .dbx-btn { background: #0061fe; border-color: #004ecc; }
         .url-btn { background: #283618; border-color: #606c38; }
 
-        /* Notes Box Styling */
         .notes-box {
             background: #110d0a;
             border: 1px dashed var(--accent-orange);
@@ -173,7 +178,6 @@
         }
         .notes-box ul { margin: 0; padding-left: 15px; }
 
-        /* Ad Banner Container */
         .ad-banner-box {
             margin: 15px 0 5px 0;
             text-align: center;
@@ -187,7 +191,7 @@
             align-items: center;
         }
 
-        /* Anti-AdBlock Modal Overlay */
+        /* Anti-AdBlock Modal */
         #adblock-modal {
             display: none;
             position: fixed;
@@ -221,7 +225,6 @@
             margin-top: 10px;
         }
 
-        /* Media Queries for Mobile & Tablet */
         @media (max-width: 768px) {
             body { padding: 5px; }
             .container { padding: 10px; }
@@ -233,16 +236,17 @@
 </head>
 <body>
 
+    <!-- Anti-AdBlock Notification Modal -->
     <div id="adblock-modal">
         <div class="adblock-content">
             <h2>⚠️ AdBlock Detected!</h2>
-            <p>We noticed you are using an AdBlocker or uBlock. Please disable your blocker or whitelist this site to support our free retro game hub and load your games properly!</p>
+            <p>Please disable your AdBlocker or uBlock to support our free retro game hub and load games properly!</p>
             <button class="adblock-btn" onclick="location.reload()">I Have Disabled It / Refresh</button>
         </div>
     </div>
 
     <div class="container">
-        <h1>🏜️ Retro Games Universal</h1>
+        <h1>🏜️ Retro Games</h1>
         <p class="subtitle">Play classic console games smoothly on your mobile, tablet, or desktop.</p>
 
         <div class="rom-selector">
@@ -285,14 +289,14 @@
                 <ul>
                     <li><strong>GitHub / GitLab:</strong> Automatically optimized via CDN (Limit: 50MB per file).</li>
                     <li><strong>Internet Archive:</strong> Highly recommended for heavy ROMs (PSX / ISO).</li>
-                    <li><strong>Mobile/Tablet:</strong> Tap on the screen controls or connect a Bluetooth gamepad!</li>
+                    <li><strong>Mobile/Tablet:</strong> Tap screen controls or connect a Bluetooth gamepad!</li>
                 </ul>
             </div>
         </div>
 
         <div id="gameWrapper">
             <div id="gameContainer">
-                <p style="color: #64748b; line-height: 100%; text-align: center; margin-top: 20%; font-size: 0.9rem;">Select a ROM file or URL to start playing</p>
+                <div style="color: #64748b; text-align: center; padding-top: 25%; font-size: 0.9rem;">Select a ROM file or URL to start playing</div>
             </div>
         </div>
 
@@ -355,7 +359,7 @@
                 },
                 cancel: function() {},
                 linkType: "preview",
-                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.n64', '.bin', '.cue', '.chd', '.iso', '.zip']
+                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.n64', '.md', '.z64', '.bin', '.cue', '.chd', '.iso', '.zip']
             });
         });
 
@@ -374,18 +378,15 @@
                          .replace('/raw/', '@')
                          .replace('/blob/', '@');
             }
-            
             else if (url.includes('gitlab.com') && url.includes('/-/blob/')) {
                 url = url.replace('/-/blob/', '/-/raw/');
             }
-
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
                 url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
             }
-
             else if (url.includes('dropbox.com')) {
                 url = url.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
                          .replace('dl.dropbox.com', 'dl.dropboxusercontent.com');
@@ -399,22 +400,12 @@
             loadGame(url, selectedCore);
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                const testAd = document.createElement('div');
-                testAd.innerHTML = '&nbsp;';
-                testAd.className = 'adsbox';
-                testAd.style.position = 'absolute';
-                testAd.style.left = '-999px';
-                document.body.appendChild(testAd);
-                
-                window.setTimeout(() => {
-                    if (testAd.offsetHeight === 0 || window.document.getElementById('container-0524f9df72294ab0e7c386b845f22017').offsetHeight === 0) {
-                        document.getElementById('adblock-modal').style.display = 'flex';
-                    }
-                    testAd.remove();
-                }, 500);
-            }, 1500);
+                const nativeAdBox = document.getElementById('container-0524f9df72294ab0e7c386b845f22017');
+                if (nativeAdBox && nativeAdBox.offsetHeight === 0) {
+                }
+            }, 3000);
         });
     </script>
 </body>
