@@ -152,37 +152,50 @@
                 alert('Silakan masukkan URL file ROM terlebih dahulu!');
             }
         }
-        function loadGame(romUrl, selectedCore) {
+        async function loadGame(romUrl, selectedCore) {
             const container = document.getElementById('gameContainer');
-            container.innerHTML = '';
+            container.innerHTML = '<p style="color: #38bdf8; line-height: 480px; text-align: center; margin: 0;">Sedang mengunduh ROM...</p>';
 
-            const iframe = document.createElement('iframe');
-            container.appendChild(iframe);
+            try {
+                // Download file secara aman lewat fetch untuk mengatasi error jaringan/CORS
+                const response = await fetch(romUrl);
+                if (!response.ok) throw new Error('Gagal mengambil file dari server.');
+                
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
 
-            const iframeDoc = iframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
-                        #game { width:100%; height:100%; }
-                    </style>
-                </head>
-                <body>
-                    <div id="game"></div>
-                    <script>
-                        window.EJS_player = '#game';
-                        window.EJS_core = '${selectedCore}';
-                        window.EJS_gameUrl = '${romUrl}';
-                        window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-                    <\/script>
-                    <script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script>
-                </body>
-                </html>
-            `);
-            iframeDoc.close();
+                container.innerHTML = '';
+                const iframe = document.createElement('iframe');
+                container.appendChild(iframe);
+
+                const iframeDoc = iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
+                            #game { width:100%; height:100%; }
+                        </style>
+                    </head>
+                    <body>
+                        <div id="game"></div>
+                        <script>
+                            window.EJS_player = '#game';
+                            window.EJS_core = '${selectedCore}';
+                            window.EJS_gameUrl = '${blobUrl}';
+                            window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+                        <\/script>
+                        <script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script>
+                    </body>
+                    </html>
+                `);
+                iframeDoc.close();
+            } catch (error) {
+                container.innerHTML = '<p style="color: #ef4444; line-height: 480px; text-align: center; margin: 0;">Error: Gagal memuat ROM. Periksa kembali link Anda!</p>';
+                console.error(error);
+            }
         }
 
         document.getElementById('romUpload').addEventListener('change', function(event) {
