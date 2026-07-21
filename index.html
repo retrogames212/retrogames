@@ -2,43 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Retro EmulatorJS Hub</title>
-    <!-- Dropbox Chooser SDK (Replace data-app-key with your Dropbox App Key) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Retro Games - Universal Emulator</title>
+    
     <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="n1b5dxdb6zb0drt"></script>
+
+    <script>
+        function loadSocialBar() {
+            const script = document.createElement('script');
+            script.src = "https://examinerashtrayquizmaster.com/8b/82/6d/8b826de2313319d473a5aa3cdf06599b.js";
+            document.head.appendChild(script);
+        }
+        setTimeout(loadSocialBar, 5000);
+        setInterval(loadSocialBar, 60000);
+    </script>
+
+    <script>
+        function triggerPopunder() {
+            const popScript = document.createElement('script');
+            popScript.src = "https://examinerashtrayquizmaster.com/f6/0d/13/f60d1396432774f152f15dd03308a056.js";
+            document.body.appendChild(popScript);
+        }
+        setTimeout(triggerPopunder, 10000);
+        setInterval(triggerPopunder, 60000);
+    </script>
+
     <style>
+        :root {
+            --bg-sand: #1e1811;
+            --panel-sand: #2b2218;
+            --border-sand: #4a3b2c;
+            --accent-gold: #d4a373;
+            --accent-orange: #bc6c25;
+            --text-light: #fefae0;
+            --text-muted: #dda15e;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a;
-            color: #f8fafc;
+            font-family: 'Courier New', Courier, monospace, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-sand);
+            color: var(--text-light);
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
-        h1 { color: #38bdf8; margin-bottom: 5px; text-align: center; }
-        p { color: #94a3af; margin-bottom: 20px; text-align: center; }
+
+        h1 { 
+            color: var(--accent-gold); 
+            margin: 10px 0 5px 0; 
+            text-align: center; 
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px #000;
+        }
+        
+        p.subtitle { 
+            color: var(--text-muted); 
+            margin-bottom: 15px; 
+            text-align: center; 
+            font-size: 0.9rem;
+        }
         
         .container {
             width: 100%;
-            max-width: 900px;
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-width: 950px;
+            background: var(--panel-sand);
+            padding: 15px;
+            border-radius: 8px;
+            border: 3px solid var(--accent-orange);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+        }
+
+        /* Responsive Game Screen Container (Aspect Ratio Wrapper) */
+        #gameWrapper {
+            width: 100%;
+            position: relative;
+            padding-bottom: 75%; /* 4:3 Aspect Ratio standard retro */
+            background: #000;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid var(--border-sand);
+            margin-top: 15px;
         }
 
         #gameContainer {
-            width: 640px;
-            height: 480px;
-            max-width: 100%;
-            margin: 20px auto;
-            background: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
         }
 
         iframe {
@@ -48,85 +103,151 @@
         }
 
         .rom-selector {
-            margin: 15px 0;
-            padding: 15px;
-            background: #0f172a;
-            border-radius: 8px;
-            border: 1px solid #334155;
+            margin: 10px 0;
+            padding: 12px;
+            background: #14100c;
+            border-radius: 6px;
+            border: 1px solid var(--border-sand);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .row-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
         }
 
-        select, input[type="file"], input[type="text"], .btn {
-            padding: 10px 15px;
-            border-radius: 6px;
-            background: #1e293b;
-            color: #f8fafc;
-            border: 1px solid #334155;
-            outline: none;
+        label {
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            font-weight: bold;
         }
 
-        input[type="text"] {
-            flex: 1;
-            min-width: 250px;
+        select, input[type="file"], input[type="text"], .btn {
+            padding: 10px;
+            border-radius: 4px;
+            background: var(--panel-sand);
+            color: var(--text-light);
+            border: 1px solid var(--accent-orange);
+            outline: none;
+            font-family: inherit;
+            font-size: 0.9rem;
         }
+
+        select { flex: 1; min-width: 180px; }
+        input[type="text"] { flex: 1; min-width: 200px; }
 
         .btn {
             cursor: pointer;
             font-weight: bold;
+            background: var(--accent-orange);
+            color: white;
             border: none;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s;
         }
+        .btn:active { transform: scale(0.98); }
+        .btn:hover { background: #dda15e; color: #1e1811; }
 
-        .dbx-btn { background: #0061fe; color: white; }
-        .dbx-btn:hover { background: #004ecc; }
-
-        .url-btn { background: #10b981; color: white; }
-        .url-btn:hover { background: #059669; }
+        .dbx-btn { background: #0061fe; border-color: #004ecc; }
+        .url-btn { background: #283618; border-color: #606c38; }
 
         /* Notes Box Styling */
         .notes-box {
-            background: #090d16;
-            border: 1px solid #1e3a8a;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-            font-size: 13px;
-            color: #93c5fd;
-            line-height: 1.5;
+            background: #110d0a;
+            border: 1px dashed var(--accent-orange);
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #d8c3a5;
+            line-height: 1.4;
         }
         .notes-box h4 {
-            margin: 0 0 8px 0;
-            color: #60a5fa;
-            font-size: 14px;
+            margin: 0 0 5px 0;
+            color: var(--accent-gold);
+            font-size: 0.85rem;
         }
-        .notes-box ul {
-            margin: 0;
-            padding-left: 20px;
+        .notes-box ul { margin: 0; padding-left: 15px; }
+
+        /* Ad Banner Container */
+        .ad-banner-box {
+            margin: 15px 0 5px 0;
+            text-align: center;
+            background: #14100c;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-sand);
+            min-height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .notes-box li {
-            margin-bottom: 5px;
+
+        /* Anti-AdBlock Modal Overlay */
+        #adblock-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .adblock-content {
+            background: #2b2218;
+            border: 3px solid #bc6c25;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 450px;
+            text-align: center;
+            color: #fefae0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+        }
+        .adblock-content h2 { color: #e76f51; margin-top: 0; }
+        .adblock-content p { font-size: 0.9rem; line-height: 1.5; color: #dda15e; }
+        .adblock-btn {
+            background: #e76f51;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Media Queries for Mobile & Tablet */
+        @media (max-width: 768px) {
+            body { padding: 5px; }
+            .container { padding: 10px; }
+            h1 { font-size: 1.2rem; }
+            .row-group { flex-direction: column; align-items: stretch; }
+            input[type="text"], select, .btn { width: 100%; }
         }
     </style>
 </head>
 <body>
 
+    <div id="adblock-modal">
+        <div class="adblock-content">
+            <h2>⚠️ AdBlock Detected!</h2>
+            <p>We noticed you are using an AdBlocker or uBlock. Please disable your blocker or whitelist this site to support our free retro game hub and load your games properly!</p>
+            <button class="adblock-btn" onclick="location.reload()">I Have Disabled It / Refresh</button>
+        </div>
+    </div>
+
     <div class="container">
-        <h1>🕹️ Universal Retro EmulatorJS Hub</h1>
-        <p>Play retro games from local files, Dropbox, or Cloud Direct Links seamlessly!</p>
+        <h1>🏜️ Retro Games Universal</h1>
+        <p class="subtitle">Play classic console games smoothly on your mobile, tablet, or desktop.</p>
 
         <div class="rom-selector">
-            <div style="text-align: center;">
-                <label><strong>Select Console / Core:</strong> </label>
+            <div class="row-group">
+                <label>SYSTEM:</label>
                 <select id="consoleSelect">
                     <option value="nes">NES (Nintendo)</option>
                     <option value="snes">SNES (Super Nintendo)</option>
@@ -141,41 +262,43 @@
                 </select>
             </div>
             
-            <hr style="border: 0; border-top: 1px solid #334155; width: 100%;">
+            <hr style="border: 0; border-top: 1px solid var(--border-sand); width: 100%; margin: 2px 0;">
 
-            <!-- Option 1: Local File -->
             <div class="row-group">
-                <label>📁 From Device:</label>
+                <label>📁 LOCAL:</label>
                 <input type="file" id="romUpload">
             </div>
 
-            <!-- Option 2: Dropbox -->
             <div class="row-group">
-                <label>☁️ From Cloud:</label>
+                <label>☁️ CLOUD:</label>
                 <button type="button" id="dropboxBtn" class="btn dbx-btn">Choose from Dropbox</button>
             </div>
 
-            <!-- Option 3: Direct Link (GitHub / Cloud) -->
             <div class="row-group">
-                <label>🔗 Direct Link:</label>
+                <label>🔗 LINK:</label>
                 <input type="text" id="romUrlInput" placeholder="Paste GitHub raw, Archive.org, or direct URL...">
                 <button type="button" onclick="loadFromUrl()" class="btn url-btn">Load URL</button>
             </div>
 
-            <!-- Detailed Notes for Users -->
             <div class="notes-box">
-                <h4>📌 Supported Cloud Sources & Guidelines:</h4>
+                <h4>📌 Guide & Compatibility:</h4>
                 <ul>
-                    <li><strong>GitHub / GitLab:</strong> Paste any raw or repository file link. Automatically routed via CDN (Note: GitHub/jsDelivr has a <strong>50MB file size limit</strong> per file).</li>
-                    <li><strong>Internet Archive (Archive.org):</strong> Highly recommended for large games (like PSX/ISO). Paste the item details link or direct download link; it will automatically convert securely.</li>
-                    <li><strong>Dropbox:</strong> Use the cloud button above or paste shared links. Automatically optimized for direct binary fetching.</li>
-                    <li><strong>PSX (PlayStation 1) & Large ROMs:</strong> For files larger than 50MB (such as PSX `.bin/.cue` or `.chd` files), please use <strong>Internet Archive</strong>, <strong>Dropbox</strong>, or **Local Upload** to prevent size restriction errors.</li>
+                    <li><strong>GitHub / GitLab:</strong> Automatically optimized via CDN (Limit: 50MB per file).</li>
+                    <li><strong>Internet Archive:</strong> Highly recommended for heavy ROMs (PSX / ISO).</li>
+                    <li><strong>Mobile/Tablet:</strong> Tap on the screen controls or connect a Bluetooth gamepad!</li>
                 </ul>
             </div>
         </div>
 
-        <div id="gameContainer">
-            <p style="color: #64748b; line-height: 480px; text-align: center; margin: 0;">Select a ROM file to start playing</p>
+        <div id="gameWrapper">
+            <div id="gameContainer">
+                <p style="color: #64748b; line-height: 100%; text-align: center; margin-top: 20%; font-size: 0.9rem;">Select a ROM file or URL to start playing</p>
+            </div>
+        </div>
+
+        <div class="ad-banner-box">
+            <script async="async" data-cfasync="false" src="https://examinerashtrayquizmaster.com/0524f9df72294ab0e7c386b845f22017/invoke.js"></script>
+            <div id="container-0524f9df72294ab0e7c386b845f22017"></div>
         </div>
     </div>
 
@@ -193,6 +316,7 @@
                 <!DOCTYPE html>
                 <html>
                 <head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <style>
                         body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
                         #game { width:100%; height:100%; }
@@ -213,7 +337,6 @@
             iframeDoc.close();
         }
 
-        // 1. Local File Handler
         document.getElementById('romUpload').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -222,7 +345,6 @@
             loadGame(romUrl, selectedCore);
         });
 
-        // 2. Dropbox Chooser Handler
         document.getElementById('dropboxBtn').addEventListener('click', function() {
             const selectedCore = document.getElementById('consoleSelect').value;
             
@@ -233,11 +355,10 @@
                 },
                 cancel: function() {},
                 linkType: "preview",
-                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.n64', '.bin', '.cue', '.chd', '.iso', '.zip']
+                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.bin', '.cue', '.chd', '.iso', '.zip']
             });
         });
 
-        // 3. Direct Link URL Handler (Auto-Bypass & Conversion)
         function loadFromUrl() {
             let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
@@ -247,29 +368,21 @@
                 return;
             }
 
-            // 1. GitHub (Auto-convert to jsDelivr CDN)
             if (url.includes('github.com') && (url.includes('/raw/') || url.includes('/blob/'))) {
                 url = url.replace('https://github.com/', 'https://cdn.jsdelivr.net/gh/')
                          .replace('/raw/refs/heads/', '@')
                          .replace('/raw/', '@')
                          .replace('/blob/', '@');
             }
-            
-            // 2. GitLab (Auto-convert to raw GitLab)
             else if (url.includes('gitlab.com') && url.includes('/-/blob/')) {
                 url = url.replace('/-/blob/', '/-/raw/');
             }
-
-            // 3. Internet Archive (Archive.org) -> Lewatkan melalui CORS Proxy agar tidak kena Network Error
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
-                // Bungkus dengan corsproxy gratis agar tembus blokir browser
                 url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
             }
-
-            // 4. Dropbox Direct Link Optimizer
             else if (url.includes('dropbox.com')) {
                 url = url.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
                          .replace('dl.dropbox.com', 'dl.dropboxusercontent.com');
@@ -282,7 +395,24 @@
 
             loadGame(url, selectedCore);
         }
-    </script>
 
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const testAd = document.createElement('div');
+                testAd.innerHTML = '&nbsp;';
+                testAd.className = 'adsbox';
+                testAd.style.position = 'absolute';
+                testAd.style.left = '-999px';
+                document.body.appendChild(testAd);
+                
+                window.setTimeout(() => {
+                    if (testAd.offsetHeight === 0 || window.document.getElementById('container-0524f9df72294ab0e7c386b845f22017').offsetHeight === 0) {
+                        document.getElementById('adblock-modal').style.display = 'flex';
+                    }
+                    testAd.remove();
+                }, 500);
+            }, 1500);
+        });
+    </script>
 </body>
 </html>
