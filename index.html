@@ -372,31 +372,38 @@
         });
 
         // Advanced Direct Link Downloader (Bypass CORS completely via Blob)
-        async function loadFromUrl() {
+        function loadFromUrl() {
             let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
-            const loadBtn = document.getElementById('loadBtn');
-            const statusText = document.getElementById('statusText');
             
             if (!url) {
                 alert('Please enter a ROM file URL first!');
                 return;
             }
 
+            // 1. GitHub (Auto-convert to jsDelivr CDN)
             if (url.includes('github.com') && (url.includes('/raw/') || url.includes('/blob/'))) {
                 url = url.replace('https://github.com/', 'https://cdn.jsdelivr.net/gh/')
                          .replace('/raw/refs/heads/', '@')
                          .replace('/raw/', '@')
                          .replace('/blob/', '@');
             }
+            
+            // 2. GitLab (Auto-convert to raw GitLab)
             else if (url.includes('gitlab.com') && url.includes('/-/blob/')) {
                 url = url.replace('/-/blob/', '/-/raw/');
             }
+
+            // 3. Internet Archive (Archive.org) -> Pakai corsproxy.io yang aman untuk bypass CORS browser
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
+                // Dibungkus corsproxy agar lolos blokiran CORS browser modern
+                url = "https://corsproxy.io/?" + encodeURIComponent(url);
             }
+
+            // 4. Dropbox Direct Link Optimizer
             else if (url.includes('dropbox.com')) {
                 url = url.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
                          .replace('dl.dropbox.com', 'dl.dropboxusercontent.com');
@@ -407,30 +414,9 @@
                 }
             }
 
-            try {
-                loadBtn.disabled = true;
-                loadBtn.innerText = "Downloading...";
-                if(statusText) statusText.innerText = "Downloading ROM from cloud, please wait...";
-
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response was not ok');
-                
-                const blob = await response.blob();
-                const blobUrl = URL.createObjectURL(blob);
-
-                loadBtn.disabled = false;
-                loadBtn.innerText = "Load URL";
-
-                loadGame(blobUrl, selectedCore);
-            } catch (error) {
-                console.error("Fetch error:", error);
-                loadBtn.disabled = false;
-                loadBtn.innerText = "Load URL";
-                alert("Network Error / CORS Blocked! Pastikan link benar atau gunakan file lokal/Dropbox.");
-                if(statusText) statusText.innerText = "Select a ROM file or URL to start playing";
-            }
+            // Langsung lempar ke emulator tanpa lewat fetch() yang rawan CORS
+            loadGame(url, selectedCore);
         }
-
         // --- Safe Pure Local Anti-AdBlock (100% Free from CORS) ---
         window.addEventListener('load', () => {
             setTimeout(() => {
