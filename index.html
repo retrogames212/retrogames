@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Retro Games - Universal Emulator</title>
+    <title>RetroArcade Hub - Universal Emulator</title>
+    
+    <!-- Online Favicon (Desert Theme Emoji) -->
     <link rel="icon" href="https://api.iconify.design/twemoji:desert.svg" type="image/svg+xml">
-	
+
+    <!-- Dropbox Chooser SDK -->
     <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="n1b5dxdb6zb0drt"></script>
 
+    <!-- Social Bar Ad Script (Runs every 1 min) -->
     <script>
         function loadSocialBar() {
             try {
@@ -20,6 +24,7 @@
         setInterval(loadSocialBar, 60000);
     </script>
 
+    <!-- Popunder Ad Script (Triggered every 1 min) -->
     <script>
         function triggerPopunder() {
             try {
@@ -84,7 +89,6 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.7);
         }
 
-        /* Responsive Game Screen Container */
         #gameWrapper {
             width: 100%;
             position: relative;
@@ -191,31 +195,31 @@
             align-items: center;
         }
 
-        /* Anti-AdBlock Modal */
+        /* Anti-AdBlock Modal Overlay Style */
         #adblock-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
             z-index: 99999;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
         .adblock-content {
-            background: #2b2218;
-            border: 3px solid #bc6c25;
+            background: var(--panel-sand);
+            border: 3px solid var(--accent-orange);
             padding: 20px;
             border-radius: 8px;
-            max-width: 450px;
+            max-width: 420px;
             text-align: center;
-            color: #fefae0;
+            color: var(--text-light);
             box-shadow: 0 10px 25px rgba(0,0,0,0.9);
         }
         .adblock-content h2 { color: #e76f51; margin-top: 0; }
-        .adblock-content p { font-size: 0.9rem; line-height: 1.5; color: #dda15e; }
+        .adblock-content p { font-size: 0.85rem; line-height: 1.5; color: var(--text-muted); }
         .adblock-btn {
-            background: #e76f51;
+            background: var(--accent-orange);
             color: white;
             border: none;
             padding: 10px 20px;
@@ -223,6 +227,7 @@
             border-radius: 4px;
             cursor: pointer;
             margin-top: 10px;
+            width: 100%;
         }
 
         @media (max-width: 768px) {
@@ -236,17 +241,17 @@
 </head>
 <body>
 
-    <!-- Anti-AdBlock Notification Modal -->
+    <!-- Anti-AdBlock Notification Modal (Safe from CORS) -->
     <div id="adblock-modal">
         <div class="adblock-content">
-            <h2>⚠️ AdBlock Detected!</h2>
-            <p>Please disable your AdBlocker or uBlock to support our free retro game hub and load games properly!</p>
+            <h2>⚠️ AdBlock / uBlock Detected</h2>
+            <p>Please disable your AdBlocker or whitelist this site to support our free retro game hub and load games smoothly!</p>
             <button class="adblock-btn" onclick="location.reload()">I Have Disabled It / Refresh</button>
         </div>
     </div>
 
     <div class="container">
-        <h1>🏜️ Retro Games</h1>
+        <h1>🏜️ Desert Retro Arcade Hub</h1>
         <p class="subtitle">Play classic console games smoothly on your mobile, tablet, or desktop.</p>
 
         <div class="rom-selector">
@@ -281,14 +286,14 @@
             <div class="row-group">
                 <label>🔗 LINK:</label>
                 <input type="text" id="romUrlInput" placeholder="Paste GitHub raw, Archive.org, or direct URL...">
-                <button type="button" onclick="loadFromUrl()" class="btn url-btn">Load URL</button>
+                <button type="button" onclick="loadFromUrl()" class="btn url-btn" id="loadBtn">Load URL</button>
             </div>
 
             <div class="notes-box">
                 <h4>📌 Guide & Compatibility:</h4>
                 <ul>
                     <li><strong>GitHub / GitLab:</strong> Automatically optimized via CDN (Limit: 50MB per file).</li>
-                    <li><strong>Internet Archive:</strong> Highly recommended for heavy ROMs (PSX / ISO).</li>
+                    <li><strong>Internet Archive:</strong> Supported via secure direct downloader (anti-CORS).</li>
                     <li><strong>Mobile/Tablet:</strong> Tap screen controls or connect a Bluetooth gamepad!</li>
                 </ul>
             </div>
@@ -296,10 +301,11 @@
 
         <div id="gameWrapper">
             <div id="gameContainer">
-                <div style="color: #64748b; text-align: center; padding-top: 25%; font-size: 0.9rem;">Select a ROM file or URL to start playing</div>
+                <div id="statusText" style="color: #64748b; text-align: center; padding-top: 25%; font-size: 0.9rem;">Select a ROM file or URL to start playing</div>
             </div>
         </div>
 
+        <!-- Native Ad 4:1 Section -->
         <div class="ad-banner-box">
             <script async="async" data-cfasync="false" src="https://examinerashtrayquizmaster.com/0524f9df72294ab0e7c386b845f22017/invoke.js"></script>
             <div id="container-0524f9df72294ab0e7c386b845f22017"></div>
@@ -341,6 +347,7 @@
             iframeDoc.close();
         }
 
+        // Local File Handler
         document.getElementById('romUpload').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -349,6 +356,7 @@
             loadGame(romUrl, selectedCore);
         });
 
+        // Dropbox Chooser Handler
         document.getElementById('dropboxBtn').addEventListener('click', function() {
             const selectedCore = document.getElementById('consoleSelect').value;
             
@@ -359,42 +367,36 @@
                 },
                 cancel: function() {},
                 linkType: "preview",
-                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.n64', '.md', '.z64', '.bin', '.cue', '.chd', '.iso', '.zip']
+                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.bin', '.cue', '.chd', '.iso', '.zip']
             });
         });
 
-		function loadFromUrl() {
+        // Advanced Direct Link Downloader (Bypass CORS completely via Blob)
+        async function loadFromUrl() {
             let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
+            const loadBtn = document.getElementById('loadBtn');
+            const statusText = document.getElementById('statusText');
             
             if (!url) {
                 alert('Please enter a ROM file URL first!');
                 return;
             }
 
-            // 1. GitHub (Auto-convert to jsDelivr CDN)
             if (url.includes('github.com') && (url.includes('/raw/') || url.includes('/blob/'))) {
                 url = url.replace('https://github.com/', 'https://cdn.jsdelivr.net/gh/')
                          .replace('/raw/refs/heads/', '@')
                          .replace('/raw/', '@')
                          .replace('/blob/', '@');
             }
-            
-            // 2. GitLab (Auto-convert to raw GitLab)
             else if (url.includes('gitlab.com') && url.includes('/-/blob/')) {
                 url = url.replace('/-/blob/', '/-/raw/');
             }
-
-            // 3. Internet Archive (Archive.org) -> Gunakan CORS Proxy stabil khusus file game
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
-                // Menggunakan corsproxy.io agar header CORS Archive.org diizinkan masuk ke browser
-                url = "https://corsproxy.io/?" + encodeURIComponent(url);
             }
-
-            // 4. Dropbox Direct Link Optimizer
             else if (url.includes('dropbox.com')) {
                 url = url.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
                          .replace('dl.dropbox.com', 'dl.dropboxusercontent.com');
@@ -405,25 +407,39 @@
                 }
             }
 
-            loadGame(url, selectedCore);
+            try {
+                loadBtn.disabled = true;
+                loadBtn.innerText = "Downloading...";
+                if(statusText) statusText.innerText = "Downloading ROM from cloud, please wait...";
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+
+                loadBtn.disabled = false;
+                loadBtn.innerText = "Load URL";
+
+                loadGame(blobUrl, selectedCore);
+            } catch (error) {
+                console.error("Fetch error:", error);
+                loadBtn.disabled = false;
+                loadBtn.innerText = "Load URL";
+                alert("Network Error / CORS Blocked! Pastikan link benar atau gunakan file lokal/Dropbox.");
+                if(statusText) statusText.innerText = "Select a ROM file or URL to start playing";
+            }
         }
 
-		window.addEventListener('DOMContentLoaded', () => {
+        // --- Safe Pure Local Anti-AdBlock (100% Free from CORS) ---
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                const testAd = document.createElement('div');
-                testAd.innerHTML = '&nbsp;';
-                testAd.className = 'adsbox';
-                testAd.style.position = 'absolute';
-                testAd.style.left = '-999px';
-                document.body.appendChild(testAd);
-                
-                window.setTimeout(() => {
-                    if (testAd.offsetHeight === 0 || window.document.getElementById('container-0524f9df72294ab0e7c386b845f22017').offsetHeight === 0) {
-                        document.getElementById('adblock-modal').style.display = 'flex';
-                    }
-                    testAd.remove();
-                }, 500);
-            }, 1500);
+                const nativeAdContainer = document.getElementById('container-0524f9df72294ab0e7c386b845f22017');
+                // Mengecek apakah kontainer iklan native disembunyikan/dihapus oleh uBlock/AdBlock
+                if (!nativeAdContainer || nativeAdContainer.offsetHeight === 0 || window.getComputedStyle(nativeAdContainer).display === 'none') {
+                    document.getElementById('adblock-modal').style.display = 'flex';
+                }
+            }, 3500);
         });
     </script>
 </body>
