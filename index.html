@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web RDP & Cloud Desktop - GitHub Edition</title>
+    <style>
+        :root {
+            --bg-deep: #090d16;
+            --bg-card: #111827;
+            --bg-card-hover: #1f2937;
+            --accent: #06b6d4;
+            --accent-glow: rgba(6, 182, 212, 0.3);
+            --text-main: #f3f4f6;
+            --text-sub: #9ca3af;
+            --border: #1f2937;
+            --win-bar: #1e293b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar / Launcher */
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { font-size: 1.8rem; }
+
+        h1 {
+            font-size: 1.4rem;
+            background: linear-gradient(to right, #22d3ee, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .subtitle { font-size: 0.75rem; color: var(--text-sub); }
+
+        .btn-launch {
+            background: linear-gradient(135deg, #0891b2, #2563eb);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 99px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(8, 145, 178, 0.4);
+        }
+        .btn-launch:hover { transform: translateY(-2px); opacity: 0.95; }
+
+        /* Main Workspace Area */
+        main {
+            flex: 1;
+            position: relative;
+            background: radial-gradient(circle at center, #0f172a 0%, #050b14 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Welcome / Setup Screen */
+        #setupScreen {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .setup-input {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 15px 0 25px 0;
+            background: #050b14;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            text-align: center;
+        }
+        .setup-input:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+
+        /* Simulated RDP Desktop Environment */
+        #rdpDesktop {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .desktop-icons {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 90px);
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .desk-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .desk-icon:hover { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(4px); }
+        .desk-icon span:first-child { font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .desk-icon span:last-child { font-size: 0.75rem; color: #fff; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+        /* Window Modal inside RDP */
+        .rdp-window {
+            position: absolute;
+            top: 10%; left: 15%; width: 650px; height: 420px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .win-titlebar {
+            background: var(--win-bar);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            cursor: move;
+        }
+
+        .win-controls { display: flex; gap: 8px; }
+        .win-btn { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; display: inline-block; }
+        .win-close { background: #ef4444; }
+        .win-min { background: #f59e0b; }
+        .win-max { background: #10b981; }
+
+        .win-content { padding: 20px; flex: 1; overflow-y: auto; font-size: 0.9rem; }
+
+        /* Taskbar Bottom */
+        .taskbar {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 200;
+        }
+
+        .start-menu-btn {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .taskbar-tray { display: flex; align-items: center; gap: 15px; font-size: 0.85rem; color: var(--text-sub); }
+
+        /* Terminal styling */
+        .terminal-box {
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #38bdf8;
+            height: 250px;
+            overflow-y: auto;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <span class="logo-icon">☁️</span>
+            <div>
+                <h1>Cloud RDP GitHub</h1>
+                <div class="subtitle">Virtual Private Desktop Client</div>
+            </div>
+        </div>
+        <button class="btn-launch" onclick="showSetup()">⚙️ Konfigurasi Koneksi</button>
+    </header>
+
+    <main>
+        <!-- Setup Screen -->
+        <div id="setupScreen">
+            <h2 style="margin-bottom: 10px;">Inisialisasi Sesi RDP</h2>
+            <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 20px;">Hubungkan instance virtual cloud Anda langsung dari server hosting statis.</p>
+            <label style="font-size: 0.8rem; color: var(--accent); display: block; text-align: left;">IP / HOST SERVER RDP:</label>
+            <input type="text" id="hostInput" class="setup-input" value="192.168.1.105-virtual.cloud">
+            <label style="font-size: 0.8rem; color: var(--accent); display: block; text-align: left;">RESOLUSI TAMPILAN:</label>
+            <select class="setup-input" style="margin-top: 8px;">
+                <option>1920 x 1080 (Full HD)</option>
+                <option>1366 x 768 (Standard)</option>
+            </select>
+            <button class="btn-launch" style="width: 100%; margin-top: 10px;" onclick="connectRDP()">🚀 Sambungkan Sekarang</button>
+        </div>
+
+        <!-- Simulated RDP Desktop -->
+        <div id="rdpDesktop">
+            <div class="desktop-icons">
+                <div class="desk-icon" onclick="openWindow('terminalWin')">
+                    <span>💻</span>
+                    <span>Terminal</span>
+                </div>
+                <div class="desk-icon" onclick="openWindow('browserWin')">
+                    <span>🌐</span>
+                    <span>Web Browser</span>
+                </div>
+                <div class="desk-icon" onclick="openWindow('filesWin')">
+                    <span>📁</span>
+                    <span>File Manager</span>
+                </div>
+                <div class="desk-icon" onclick="openWindow('systemWin')">
+                    <span>📊</span>
+                    <span>Resource Monitor</span>
+                </div>
+            </div>
+
+            <!-- Window: Terminal -->
+            <div id="terminalWin" class="rdp-window" style="top: 8%; left: 10%;">
+                <div class="win-titlebar">
+                    <span style="font-size: 0.85rem; font-weight: bold;">💻 Bash Terminal - Root@Cloud-Server</span>
+                    <div class="win-controls">
+                        <span class="win-btn win-min" onclick="closeWindow('terminalWin')"></span>
+                        <span class="win-btn win-max"></span>
+                        <span class="win-btn win-close" onclick="closeWindow('terminalWin')"></span>
+                    </div>
+                </div>
+                <div class="win-content">
+                    <div class="terminal-box" id="termOutput">
+                        Ubuntu 24.04 LTS (GNU/Linux 6.8.0-generic x86_64)<br>
+                        * Documentation:  https://help.ubuntu.com<br>
+                        * Management:     https://cockpit-project.org<br><br>
+                        root@github-rdp:~# uptime<br>
+                        10:00:00 up 45 days, 2 users, load average: 0.12, 0.05, 0.01<br>
+                        root@github-rdp:~# <span style="animation: blink 1s infinite;">_</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Window: Browser -->
+            <div id="browserWin" class="rdp-window" style="top: 15%; left: 25%;">
+                <div class="win-titlebar">
+                    <span style="font-size: 0.85rem; font-weight: bold;">🌐 Chromium Cloud Browser</span>
+                    <div class="win-controls">
+                        <span class="win-btn win-close" onclick="closeWindow('browserWin')"></span>
+                    </div>
+                </div>
+                <div class="win-content" style="background:#fff; color:#000; padding:15px;">
+                    <div style="background:#f1f5f9; padding:8px 12px; border-radius:6px; font-size:0.8rem; margin-bottom:15px; border:1px solid #cbd5e1;">
+                        🔒 https://github.com/dashboard-cloud-instance
+                    </div>
+                    <h3>Koneksi Cloud Aktif!</h3>
+                    <p style="margin-top: 8px; color: #475569; font-size: 0.85rem;">Browser virtual berjalan dalam environment aman berkecepatan tinggi.</p>
+                </div>
+            </div>
+
+            <!-- Window: File Manager -->
+            <div id="filesWin" class="rdp-window" style="top: 20%; left: 35%;">
+                <div class="win-titlebar">
+                    <span style="font-size: 0.85rem; font-weight: bold;">📁 File Explorer (/home/user)</span>
+                    <div class="win-controls">
+                        <span class="win-btn win-close" onclick="closeWindow('filesWin')"></span>
+                    </div>
+                </div>
+                <div class="win-content">
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
+                        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:8px;">📁 Documents</div>
+                        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:8px;">📁 Downloads</div>
+                        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:8px;">📁 Projects</div>
+                        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:8px;">📄 config.json</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Window: System Monitor -->
+            <div id="systemWin" class="rdp-window" style="top: 12%; left: 40%;">
+                <div class="win-titlebar">
+                    <span style="font-size: 0.85rem; font-weight: bold;">📊 Resource Monitor (CPU / RAM)</span>
+                    <div class="win-controls">
+                        <span class="win-btn win-close" onclick="closeWindow('systemWin')"></span>
+                    </div>
+                </div>
+                <div class="win-content">
+                    <p style="margin-bottom: 10px;">CPU Usage: <span style="color:#38bdf8;">14%</span></p>
+                    <div style="background:#050b14; height:12px; border-radius:6px; overflow:hidden; margin-bottom:15px;">
+                        <div style="background:#06b6d4; width:14%; height:100%;"></div>
+                    </div>
+                    <p style="margin-bottom: 10px;">RAM Allocation: <span style="color:#4ade80;">1.8 GB / 8.0 GB</span></p>
+                    <div style="background:#050b14; height:12px; border-radius:6px; overflow:hidden;">
+                        <div style="background:#4ade80; width:22%; height:100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Taskbar -->
+            <div class="taskbar">
+                <button class="start-menu-btn">🪟 Start Menu</button>
+                <div class="taskbar-tray">
+                    <span id="activeHostDisplay" style="color: var(--accent);">Connected</span>
+                    <span>📶 1Gbps</span>
+                    <span id="clock">00:00</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function showSetup() {
+            document.getElementById('setupScreen').style.display = 'block';
+            document.getElementById('rdpDesktop').style.display = 'none';
+        }
+
+        function connectRDP() {
+            let host = document.getElementById('hostInput').value;
+            document.getElementById('activeHostDisplay').textContent = host;
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('rdpDesktop').style.display = 'flex';
+        }
+
+        function openWindow(winId) {
+            document.getElementById(winId).style.display = 'flex';
+        }
+
+        function closeWindow(winId) {
+            document.getElementById(winId).style.display = 'none';
+        }
+
+        // Live Clock on Taskbar
+        setInterval(() => {
+            let d = new Date();
+            let h = String(d.getHours()).padStart(2, '0');
+            let m = String(d.getMinutes()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${h}:${m}`;
+        }, 1000);
+    </script>
+</body>
+</html>
