@@ -9,7 +9,7 @@
     <link rel="icon" href="https://api.iconify.design/twemoji:desert.svg" type="image/svg+xml">
 
     <!-- Dropbox Chooser SDK -->
-    <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="n1b5dxdb6zb0drt"></script>
+    <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="MASUKKAN_DROPBOX_APP_KEY_ANDA"></script>
 
     <!-- Social Bar Ad Script (Runs every 1 min) -->
     <script>
@@ -195,41 +195,6 @@
             align-items: center;
         }
 
-        /* Anti-AdBlock Modal Overlay Style */
-        #adblock-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 99999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .adblock-content {
-            background: var(--panel-sand);
-            border: 3px solid var(--accent-orange);
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 420px;
-            text-align: center;
-            color: var(--text-light);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.9);
-        }
-        .adblock-content h2 { color: #e76f51; margin-top: 0; }
-        .adblock-content p { font-size: 0.85rem; line-height: 1.5; color: var(--text-muted); }
-        .adblock-btn {
-            background: var(--accent-orange);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
-        }
-
         @media (max-width: 768px) {
             body { padding: 5px; }
             .container { padding: 10px; }
@@ -241,17 +206,8 @@
 </head>
 <body>
 
-    <!-- Anti-AdBlock Notification Modal (Safe from CORS) -->
-    <div id="adblock-modal">
-        <div class="adblock-content">
-            <h2>⚠️ AdBlock / uBlock Detected</h2>
-            <p>Please disable your AdBlocker or whitelist this site to support our free retro game hub and load games smoothly!</p>
-            <button class="adblock-btn" onclick="location.reload()">I Have Disabled It / Refresh</button>
-        </div>
-    </div>
-
     <div class="container">
-        <h1>🏜️ Retro Games</h1>
+        <h1>🏜️ Desert Retro Arcade Hub</h1>
         <p class="subtitle">Play classic console games smoothly on your mobile, tablet, or desktop.</p>
 
         <div class="rom-selector">
@@ -286,14 +242,14 @@
             <div class="row-group">
                 <label>🔗 LINK:</label>
                 <input type="text" id="romUrlInput" placeholder="Paste GitHub raw, Archive.org, or direct URL...">
-                <button type="button" onclick="loadFromUrl()" class="btn url-btn" id="loadBtn">Load URL</button>
+                <button type="button" onclick="loadFromUrl()" class="btn url-btn">Load URL</button>
             </div>
 
             <div class="notes-box">
                 <h4>📌 Guide & Compatibility:</h4>
                 <ul>
-                    <li><strong>GitHub / GitLab:</strong> Automatically optimized via CDN (Limit: 50MB per file).</li>
-                    <li><strong>Internet Archive:</strong> Supported via secure direct downloader (anti-CORS).</li>
+                    <li><strong>GitHub / GitLab:</strong> Automatically optimized via CDN.</li>
+                    <li><strong>Internet Archive:</strong> Supported via CORS proxy integration.</li>
                     <li><strong>Mobile/Tablet:</strong> Tap screen controls or connect a Bluetooth gamepad!</li>
                 </ul>
             </div>
@@ -301,7 +257,7 @@
 
         <div id="gameWrapper">
             <div id="gameContainer">
-                <div id="statusText" style="color: #64748b; text-align: center; padding-top: 25%; font-size: 0.9rem;">Select a ROM file or URL to start playing</div>
+                <div style="color: #64748b; text-align: center; padding-top: 25%; font-size: 0.9rem;">Select a ROM file or URL to start playing</div>
             </div>
         </div>
 
@@ -371,7 +327,7 @@
             });
         });
 
-        // Advanced Direct Link Downloader (Bypass CORS completely via Blob)
+        // Fungsi Asli Andalan
         function loadFromUrl() {
             let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
@@ -394,12 +350,11 @@
                 url = url.replace('/-/blob/', '/-/raw/');
             }
 
-            // 3. Internet Archive (Archive.org) -> Pakai allorigins kesayangan, plus pengaman ekstra
+            // 3. Internet Archive (Archive.org) -> Lewatkan melalui CORS Proxy agar tidak kena Network Error
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
-                // Tetap pakai allorigins tapi ditambah encodeURIComponent yang bersih
                 url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
             }
 
@@ -416,16 +371,6 @@
 
             loadGame(url, selectedCore);
         }
-        // --- Safe Pure Local Anti-AdBlock (100% Free from CORS) ---
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const nativeAdContainer = document.getElementById('container-0524f9df72294ab0e7c386b845f22017');
-                // Mengecek apakah kontainer iklan native disembunyikan/dihapus oleh uBlock/AdBlock
-                if (!nativeAdContainer || nativeAdContainer.offsetHeight === 0 || window.getComputedStyle(nativeAdContainer).display === 'none') {
-                    document.getElementById('adblock-modal').style.display = 'flex';
-                }
-            }, 3500);
-        });
     </script>
 </body>
 </html>
