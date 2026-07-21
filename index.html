@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Retro Games Hub</title>
+    <title>Universal Retro Retro</title>
+    <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="n1b5dxdb6zb0drt"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -15,18 +16,17 @@
             flex-direction: column;
             align-items: center;
         }
-        h1 { color: #38bdf8; margin-bottom: 5px; }
-        p { color: #94a3af; margin-bottom: 20px; }
+        h1 { color: #38bdf8; margin-bottom: 5px; text-align: center; }
+        p { color: #94a3af; margin-bottom: 20px; text-align: center; }
         
         .container {
             width: 100%;
-            max-width: 850px;
+            max-width: 900px;
             background: #1e293b;
             padding: 20px;
             border-radius: 12px;
             border: 1px solid #334155;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            text-align: center;
         }
 
         #gameContainer {
@@ -54,28 +54,54 @@
             border: 1px solid #334155;
             display: flex;
             flex-direction: column;
+            gap: 15px;
+        }
+
+        .row-group {
+            display: flex;
             gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
             align-items: center;
         }
 
-        select, input[type="file"] {
-            padding: 8px;
+        select, input[type="file"], input[type="text"], .btn {
+            padding: 10px 15px;
             border-radius: 6px;
             background: #1e293b;
             color: #f8fafc;
             border: 1px solid #334155;
+            outline: none;
         }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .btn {
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            transition: background 0.2s;
+        }
+
+        .dbx-btn { background: #0061fe; color: white; }
+        .dbx-btn:hover { background: #004ecc; }
+
+        .url-btn { background: #10b981; color: white; }
+        .url-btn:hover { background: #059669; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🕹️ Retro Games</h1>
-        <p>Play your favorite games on web!</p>
+        <h1>🕹️ Universal Retro Games</h1>
+        <p>Play retro games from local files, Dropbox, or other direct cloud links!</p>
 
         <div class="rom-selector">
-            <div>
-                <label>Select Console / Core: </label>
+            <div style="text-align: center;">
+                <label><strong>Pilih Konsol / Core:</strong> </label>
                 <select id="consoleSelect">
                     <option value="nes">NES (Nintendo)</option>
                     <option value="snes">SNES (Super Nintendo)</option>
@@ -89,33 +115,41 @@
                     <option value="arcade">Arcade (MAME)</option>
                 </select>
             </div>
-            <div>
-                <label>File ROM: </label>
+            
+            <hr style="border: 0; border-top: 1px solid #334155; width: 100%;">
+
+            <!-- Opsi 1: File Lokal -->
+            <div class="row-group">
+                <label>📁 From Device:</label>
                 <input type="file" id="romUpload">
+            </div>
+
+            <div class="row-group">
+                <label>☁️ From Cloud:</label>
+                <button type="button" id="dropboxBtn" class="btn dbx-btn">Choose from Dropbox</button>
+            </div>
+
+            <div class="row-group">
+                <label>🔗 Direct Link:</label>
+                <input type="text" id="romUrlInput" placeholder="https://example.com/game.zip (or another direct cloud link)">
+                <button type="button" onclick="loadFromUrl()" class="btn url-btn">Load URL</button>
             </div>
         </div>
 
         <div id="gameContainer">
-            <p style="color: #64748b; line-height: 480px; margin: 0;">Select a ROM file above to start playing.</p>
+            <p style="color: #64748b; line-height: 480px; text-align: center; margin: 0;">Select a ROM file to start playing.</p>
         </div>
     </div>
 
     <script>
-        document.getElementById('romUpload').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const romUrl = URL.createObjectURL(file);
-            const selectedCore = document.getElementById('consoleSelect').value;
+        function loadGame(romUrl, selectedCore) {
             const container = document.getElementById('gameContainer');
-
             container.innerHTML = '';
 
             const iframe = document.createElement('iframe');
             container.appendChild(iframe);
 
             const iframeDoc = iframe.contentWindow.document;
-
             iframeDoc.open();
             iframeDoc.write(`
                 <!DOCTYPE html>
@@ -139,7 +173,39 @@
                 </html>
             `);
             iframeDoc.close();
+        }
+
+        document.getElementById('romUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const romUrl = URL.createObjectURL(file);
+            const selectedCore = document.getElementById('consoleSelect').value;
+            loadGame(romUrl, selectedCore);
         });
+
+        document.getElementById('dropboxBtn').addEventListener('click', function() {
+            const selectedCore = document.getElementById('consoleSelect').value;
+            
+            Dropbox.choose({
+                success: function(files) {
+                    let directUrl = files[0].link.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+                    loadGame(directUrl, selectedCore);
+                },
+                cancel: function() {},
+                linkType: "preview",
+                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.bin', '.iso', '.zip']
+            });
+        });
+
+        function loadFromUrl() {
+            const url = document.getElementById('romUrlInput').value.trim();
+            const selectedCore = document.getElementById('consoleSelect').value;
+            if (url) {
+                loadGame(url, selectedCore);
+            } else {
+                alert('Please enter the ROM file URL first!');
+            }
+        }
     </script>
 
 </body>
