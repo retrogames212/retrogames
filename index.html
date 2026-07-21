@@ -260,9 +260,13 @@
                 url = url.replace('/-/blob/', '/-/raw/');
             }
 
-            // 3. Internet Archive (Archive.org)
-            else if (url.includes('archive.org/details/')) {
-                url = url.replace('/details/', '/download/');
+            // 3. Internet Archive (Archive.org) -> Lewatkan melalui CORS Proxy agar tidak kena Network Error
+            else if (url.includes('archive.org')) {
+                if (url.includes('/details/')) {
+                    url = url.replace('/details/', '/download/');
+                }
+                // Bungkus dengan corsproxy gratis agar tembus blokir browser
+                url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
             }
 
             // 4. Dropbox Direct Link Optimizer
