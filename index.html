@@ -355,7 +355,7 @@
                 },
                 cancel: function() {},
                 linkType: "preview",
-                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.bin', '.cue', '.chd', '.iso', '.zip']
+                extensions: ['.nes', '.snes', '.smc', '.gb', '.gbc', '.gba', '.gen', '.md', '.z64', '.n64', '.bin', '.cue', '.chd', '.iso', '.zip']
             });
         });
 
@@ -374,15 +374,18 @@
                          .replace('/raw/', '@')
                          .replace('/blob/', '@');
             }
+            
             else if (url.includes('gitlab.com') && url.includes('/-/blob/')) {
                 url = url.replace('/-/blob/', '/-/raw/');
             }
+
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
                 url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
             }
+
             else if (url.includes('dropbox.com')) {
                 url = url.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
                          .replace('dl.dropbox.com', 'dl.dropboxusercontent.com');
