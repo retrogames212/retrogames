@@ -363,7 +363,7 @@
             });
         });
 
-        function loadFromUrl() {
+		function loadFromUrl() {
             let url = document.getElementById('romUrlInput').value.trim();
             const selectedCore = document.getElementById('consoleSelect').value;
             
@@ -378,15 +378,18 @@
                          .replace('/raw/', '@')
                          .replace('/blob/', '@');
             }
+            
             else if (url.includes('gitlab.com') && url.includes('/-/blob/')) {
                 url = url.replace('/-/blob/', '/-/raw/');
             }
+
             else if (url.includes('archive.org')) {
                 if (url.includes('/details/')) {
                     url = url.replace('/details/', '/download/');
                 }
                 url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
             }
+
             else if (url.includes('dropbox.com')) {
                 url = url.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
                          .replace('dl.dropbox.com', 'dl.dropboxusercontent.com');
