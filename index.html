@@ -142,6 +142,17 @@
     </div>
 
     <script>
+        function loadFromUrl() {
+            let url = document.getElementById('romUrlInput').value.trim();
+            const selectedCore = document.getElementById('consoleSelect').value;
+            if (url) {
+                // Melewati proxy CORS publik agar tidak error
+                const proxiedUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
+                loadGame(proxiedUrl, selectedCore);
+            } else {
+                alert('Silakan masukkan URL file ROM terlebih dahulu!');
+            }
+        }
         function loadGame(romUrl, selectedCore) {
             const container = document.getElementById('gameContainer');
             container.innerHTML = '';
